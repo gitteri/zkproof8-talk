@@ -45,6 +45,36 @@ export type ActionResponse = {
   state: LedgerState;
 };
 
+/**
+ * Stage-by-stage events emitted by the demo backend during a confidential
+ * transfer. Mirrors `conf_balances_examples::types::TransferProgress`.
+ */
+export type TransferProgress =
+  | { type: "phase"; name: string; detail: string }
+  | { type: "signature"; label: string; sig: string }
+  | { type: "done"; sigs: string[] }
+  | { type: "error"; message: string };
+
+/** Subscribe to the SSE event stream. Returns a cleanup function. */
+export function subscribeProgress(
+  onEvent: (ev: TransferProgress) => void,
+  onError?: () => void,
+): () => void {
+  const es = new EventSource(`${BASE}/demo/events`);
+  es.onmessage = (msg) => {
+    try {
+      const ev = JSON.parse(msg.data) as TransferProgress;
+      onEvent(ev);
+    } catch {
+      /* ignore malformed payload */
+    }
+  };
+  es.onerror = () => {
+    if (onError) onError();
+  };
+  return () => es.close();
+}
+
 async function fetchJson<T>(path: string, init?: RequestInit): Promise<T> {
   const res = await fetch(`${BASE}${path}`, {
     ...init,

@@ -1,6 +1,6 @@
 import { SlideEyebrow, SlideFrame, SlideTitle } from "@/components/SlideFrame";
 
-export function Slide02ColdOpen() {
+export function Slide02AboutMe() {
   return (
     <SlideFrame align="start">
       <div className="flex h-full w-full flex-col justify-center gap-8">

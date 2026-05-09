@@ -30,7 +30,7 @@ const systemAsks = [
   },
 ];
 
-export function Slide19DemoTransfer() {
+export function Slide18OpenProblems() {
   return (
     <SlideFrame align="start">
       <div className="flex h-full w-full flex-col gap-8">
@@ -43,11 +43,6 @@ export function Slide19DemoTransfer() {
           <AskColumn title="Primitives" asks={primitiveAsks} tone="green" />
           <AskColumn title="Systems" asks={systemAsks} tone="purple" />
         </div>
-
-        <p className="max-w-[80ch] font-sans text-deck-base text-bone">
-          If your next paper or prototype attacks one of these, payment
-          companies have a reason to care.
-        </p>
       </div>
     </SlideFrame>
   );

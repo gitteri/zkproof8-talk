@@ -9,6 +9,7 @@ const steps = [
     op: "configure mint",
     title: "Issuer enables confidential transfers",
     body: "Mint is created with the ConfidentialTransferMint extension. Issuer optionally sets an auditor ElGamal pubkey and a privacy level (disabled / opt-in / whitelisted / required).",
+    primitives: ["twisted ElGamal pk_auditor", "policy flag"],
     publicView: "extension data, auditor pubkey",
     ownerView: "issuer policy is fixed",
     auditorView: "registered audit target",
@@ -17,6 +18,7 @@ const steps = [
     op: "opt-in",
     title: "Holder configures their account",
     body: "Each holder reallocates their token account for the ConfidentialTransferAccount extension, derives an ElGamal keypair and AES key from their signature, and submits a pubkey-validity proof.",
+    primitives: ["ElGamal keypair", "AES-GCM-SIV key", "PubkeyValidity sigma proof"],
     publicView: "account extension, ElGamal pubkey",
     ownerView: "ElGamal sk + AES key derived",
     auditorView: "holder is recognizable",
@@ -25,6 +27,7 @@ const steps = [
     op: "deposit",
     title: "Public balance becomes pending",
     body: "Owner deposits public token balance into encrypted pending balance. Pending uses a 16-bit lo / 16-bit hi ElGamal split for tractable owner-side decryption.",
+    primitives: ["twisted ElGamal", "16-bit lo / 16-bit hi split", "Pedersen commitment"],
     publicView: "deposit amount visible",
     ownerView: "pending ciphertext decrypts",
     auditorView: "deposit amount visible",
@@ -33,6 +36,7 @@ const steps = [
     op: "apply pending",
     title: "Owner moves pending to available",
     body: "Both sides do this: sender after deposit, receiver after incoming transfer. The instruction recomputes the AES-encrypted available balance for fast owner-side reads.",
+    primitives: ["AES-GCM-SIV available cipher", "ElGamal homomorphic add"],
     publicView: "apply instruction, counter advance",
     ownerView: "new available balance (AES)",
     auditorView: "state transition recorded",
@@ -41,6 +45,11 @@ const steps = [
     op: "transfer",
     title: "Encrypted amount, three ciphertexts",
     body: "Transfer instruction carries ciphertexts under sender, receiver, and (if configured) auditor keys. Equality, ciphertext-validity, and range proofs live in proof context state accounts so the transfer fits in a normal transaction.",
+    primitives: [
+      "GroupedCiphertext3HandlesValidity",
+      "CiphertextCiphertextEquality",
+      "BatchedRangeProofU128 (Bulletproofs)",
+    ],
     publicView: "ciphertexts + 3 proof accounts",
     ownerView: "sender debit, receiver credit",
     auditorView: "amount via auditor handle",
@@ -49,13 +58,14 @@ const steps = [
     op: "withdraw",
     title: "Available becomes public again",
     body: "Owner withdraws encrypted available balance back to public token balance. Withdrawal carries a ciphertext-commitment equality proof binding the encrypted amount to the public amount.",
+    primitives: ["CiphertextCommitmentEquality", "Pedersen opening"],
     publicView: "withdraw amount visible",
     ownerView: "available balance decrements",
     auditorView: "withdrawal recorded",
   },
 ];
 
-export function Slide07PendingAvailable() {
+export function Slide07ProtocolOverview() {
   const [active, setActive] = useState(0);
   const activeRef = useRef(0);
 
@@ -110,7 +120,7 @@ export function Slide07PendingAvailable() {
         </div>
 
         <div className="grid flex-1 grid-cols-[0.95fr_1.05fr] gap-5">
-          <div className="rounded-md border border-sol-green/50 bg-sol-green/5 p-6">
+          <div className="flex flex-col rounded-md border border-sol-green/50 bg-sol-green/5 p-6">
             <div className="font-mono text-deck-xs uppercase text-sol-green">
               {step.op}
             </div>
@@ -120,6 +130,21 @@ export function Slide07PendingAvailable() {
             <p className="mt-3 font-sans text-deck-sm text-bone-dim">
               {step.body}
             </p>
+            <div className="mt-auto pt-5">
+              <div className="font-mono text-deck-xs uppercase text-bone-mute">
+                primitives
+              </div>
+              <div className="mt-2 flex flex-wrap gap-2">
+                {step.primitives.map((p) => (
+                  <span
+                    key={p}
+                    className="rounded border border-sol-green/40 bg-ink-softer/40 px-2.5 py-1 font-mono text-deck-xs text-sol-green"
+                  >
+                    {p}
+                  </span>
+                ))}
+              </div>
+            </div>
           </div>
 
           <div className="grid grid-cols-3 gap-3">

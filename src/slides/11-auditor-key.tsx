@@ -12,7 +12,7 @@ const stillNeed = [
   "Long-term key management story (rotation, threshold control, revocation)",
 ];
 
-export function Slide11Audits() {
+export function Slide11AuditorKey() {
   return (
     <SlideFrame align="start">
       <div className="flex h-full w-full flex-col gap-8">

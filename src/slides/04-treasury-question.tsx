@@ -1,6 +1,6 @@
 import { SlideEyebrow, SlideFrame } from "@/components/SlideFrame";
 
-export function Slide03PrivacySpectrum() {
+export function Slide04TreasuryQuestion() {
   return (
     <SlideFrame align="start">
       <div className="flex h-full w-full flex-col justify-center gap-12">

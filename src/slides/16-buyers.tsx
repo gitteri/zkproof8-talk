@@ -18,7 +18,7 @@ const buyers = [
   },
 ];
 
-export function Slide17Ecosystem() {
+export function Slide16Buyers() {
   return (
     <SlideFrame align="start">
       <div className="flex h-full w-full flex-col gap-10">
@@ -47,12 +47,6 @@ export function Slide17Ecosystem() {
             </div>
           ))}
         </div>
-
-        <p className="max-w-[82ch] font-sans text-deck-base text-bone">
-          Use cleared names only. The stronger point is the pattern: these are
-          organizations that already understand account-based payments and
-          already require confidentiality.
-        </p>
       </div>
     </SlideFrame>
   );

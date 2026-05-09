@@ -19,7 +19,7 @@ const rows = [
   },
 ];
 
-export function Slide05B2B() {
+export function Slide09WhyNotUtxos() {
   return (
     <SlideFrame align="start">
       <div className="flex h-full w-full flex-col gap-10">

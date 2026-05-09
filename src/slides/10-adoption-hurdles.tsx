@@ -18,7 +18,7 @@ const hurdles = [
   },
 ];
 
-export function Slide09DemoKeyDerivation() {
+export function Slide10AdoptionHurdles() {
   return (
     <SlideFrame align="start">
       <div className="flex h-full w-full flex-col gap-10">

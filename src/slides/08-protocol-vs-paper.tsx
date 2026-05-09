@@ -40,7 +40,7 @@ const deploymentOnly = [
   "16-bit lo / 16-bit hi ElGamal split on pending balance for tractable u32 decryption",
 ];
 
-export function Slide08Auditor() {
+export function Slide08ProtocolVsPaper() {
   return (
     <SlideFrame align="start">
       <div className="flex h-full w-full flex-col gap-6">

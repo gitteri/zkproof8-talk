@@ -1,39 +1,122 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import clsx from "clsx";
 
 import { SlideEyebrow, SlideFrame, SlideTitle } from "@/components/SlideFrame";
-import { useDemoState } from "@/hooks/useDemo";
-import type { LedgerState } from "@/lib/api";
+import { TransferProgressPopup } from "@/components/TransferProgressPopup";
+import { useDemoState, useTransferProgress } from "@/hooks/useDemo";
+import type { ActionResponse, LedgerState, TransferProgress } from "@/lib/api";
 
-export function Slide14Adoption() {
+type ActiveOp = "transfer" | "apply" | null;
+
+export function Slide13LiveTransfer() {
   const { state, busy, error, runTransfer, runApply } = useDemoState(true);
+  const { events, reset, push } = useTransferProgress();
+  const [popupOpen, setPopupOpen] = useState(false);
+  const [activeOp, setActiveOp] = useState<ActiveOp>(null);
+
+  // Refs that mirror state + callbacks so the keydown listener can be
+  // registered exactly once (no re-registration on every popup change).
   const busyRef = useRef(false);
+  const popupOpenRef = useRef(false);
+  const eventsRef = useRef<TransferProgress[]>([]);
+  const runTransferRef = useRef(runTransfer);
+  const runApplyRef = useRef(runApply);
+  const resetRef = useRef(reset);
+  const pushRef = useRef(push);
 
   useEffect(() => {
     busyRef.current = busy;
   }, [busy]);
+  useEffect(() => {
+    popupOpenRef.current = popupOpen;
+  }, [popupOpen]);
+  useEffect(() => {
+    eventsRef.current = events;
+  }, [events]);
+  useEffect(() => {
+    runTransferRef.current = runTransfer;
+    runApplyRef.current = runApply;
+    resetRef.current = reset;
+    pushRef.current = push;
+  }, [runTransfer, runApply, reset, push]);
+
+  // Auto-close popup ~2s after a terminal event arrives.
+  useEffect(() => {
+    const last = events.at(-1);
+    if (!last) return;
+    if (last.type === "done" || last.type === "error") {
+      const id = window.setTimeout(() => setPopupOpen(false), 2200);
+      return () => window.clearTimeout(id);
+    }
+    return undefined;
+  }, [events]);
+
+  // Fallback: if the underlying mutation resolves (busy → false) and we never
+  // got a terminal SSE event, close the popup anyway so it doesn't sit on
+  // "waiting for backend…" forever.
+  useEffect(() => {
+    if (busy || !popupOpen) return undefined;
+    const last = events.at(-1);
+    if (last?.type === "done" || last?.type === "error") return undefined;
+    const id = window.setTimeout(() => setPopupOpen(false), 1500);
+    return () => window.clearTimeout(id);
+  }, [busy, popupOpen, events]);
 
   useEffect(() => {
     function onKey(e: KeyboardEvent) {
       const target = e.target as HTMLElement | null;
       if (target && (target.tagName === "INPUT" || target.tagName === "TEXTAREA")) return;
+
+      if (e.key === "Escape") {
+        if (popupOpenRef.current) {
+          e.preventDefault();
+          e.stopPropagation();
+          setPopupOpen(false);
+        }
+        return;
+      }
+
       if (busyRef.current) return;
 
       if (e.key === "r" || e.key === "R") {
         e.preventDefault();
         e.stopPropagation();
-        void runTransfer();
+        resetRef.current();
+        setActiveOp("transfer");
+        setPopupOpen(true);
+        void runTransferRef.current().then((r) => synthesizeIfSilent(r, "transfer"));
       } else if (e.key === "a" || e.key === "A") {
         e.preventDefault();
         e.stopPropagation();
-        void runApply("receiver");
+        resetRef.current();
+        setActiveOp("apply");
+        setPopupOpen(true);
+        void runApplyRef.current("receiver").then((r) =>
+          synthesizeIfSilent(r, "apply-pending-receiver"),
+        );
       }
+    }
+
+    function synthesizeIfSilent(r: ActionResponse | null, label: string) {
+      if (!r) return;
+      // If real SSE events arrived, no synthesis needed.
+      const hasRealEvents = eventsRef.current.some(
+        (e) => e.type === "signature" || e.type === "done",
+      );
+      if (hasRealEvents) return;
+      const synthetic: TransferProgress[] = r.signatures.map((sig, idx) => ({
+        type: "signature" as const,
+        label: r.signatures.length === 1 ? label : `${label}-${idx + 1}`,
+        sig,
+      }));
+      synthetic.push({ type: "done", sigs: r.signatures });
+      pushRef.current(synthetic);
     }
     window.addEventListener("keydown", onKey, { capture: true });
     return () => window.removeEventListener("keydown", onKey, { capture: true });
-  }, [runTransfer, runApply]);
+  }, []);
 
   const cols = buildColumns(state);
 
@@ -96,6 +179,11 @@ export function Slide14Adoption() {
                       -- not authorized --
                     </span>
                   )}
+                  {c.pendingPlain && (
+                    <code className="mt-1 block font-mono text-deck-sm text-sol-purple">
+                      {c.pendingPlain}
+                    </code>
+                  )}
                 </div>
                 {c.extra && (
                   <div>
@@ -117,10 +205,6 @@ export function Slide14Adoption() {
         </div>
 
         <div className="flex items-baseline justify-between gap-6 border-t border-ink-line pt-4">
-          <p className="max-w-[60ch] font-sans text-deck-base text-bone">
-            Same transaction. Different views. The treasury team&apos;s question
-            gets a different answer.
-          </p>
           <div className="flex items-center gap-3 font-mono text-deck-xs uppercase text-bone-mute">
             {!state && !busy && (
               <span className="text-bone-mute">
@@ -138,6 +222,12 @@ export function Slide14Adoption() {
           </div>
         </div>
       </div>
+      <TransferProgressPopup
+        open={popupOpen}
+        events={events}
+        title={activeOp === "apply" ? "Apply pending balance" : "Live transfer"}
+        onClose={() => setPopupOpen(false)}
+      />
     </SlideFrame>
   );
 }
@@ -158,6 +248,7 @@ type Column = {
   sub: string;
   ciphertext: string;
   plaintext: string | null;
+  pendingPlain?: string | null;
   accent: string;
   extra?: string[];
 };
@@ -172,13 +263,6 @@ function buildColumns(state: LedgerState | null): Column[] {
     (e) => e.kind === "transfer",
   );
 
-  const recvPlain =
-    state.receiver.available_ui > 0
-      ? `${formatUi(state.receiver.available_ui)} avail`
-      : state.receiver.pending_ui > 0
-        ? `${formatUi(state.receiver.pending_ui)} pending`
-        : "0";
-
   return [
     {
       role: "Sender / Treasury",
@@ -191,7 +275,11 @@ function buildColumns(state: LedgerState | null): Column[] {
       role: "Receiver / Vendor",
       sub: "owner decrypt",
       ciphertext: state.receiver.pending_ui > 0 ? recvPendingCt : recvAvailableCt,
-      plaintext: recvPlain,
+      plaintext: `${formatUi(state.receiver.available_ui)} avail`,
+      pendingPlain:
+        state.receiver.pending_ui > 0
+          ? `+ ${formatUi(state.receiver.pending_ui)} pending`
+          : null,
       accent: "border-sol-green/60",
     },
     {

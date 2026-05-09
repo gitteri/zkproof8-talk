@@ -1,23 +1,24 @@
 import type { ComponentType } from "react";
 
 import { Slide01Title } from "@/slides/01-title";
-import { Slide02ColdOpen } from "@/slides/02-cold-open";
-import { Slide03PrivacySpectrum } from "@/slides/03-privacy-spectrum";
-import { Slide04Treasury } from "@/slides/04-treasury";
-import { Slide05B2B } from "@/slides/05-b2b";
-import { Slide06DemoProtocol } from "@/slides/06-demo-protocol";
-import { Slide07PendingAvailable } from "@/slides/07-pending-available";
-import { Slide08Auditor } from "@/slides/08-auditor";
-import { Slide09DemoKeyDerivation } from "@/slides/09-demo-key-derivation";
-import { Slide11Audits } from "@/slides/11-audits";
-import { Slide13Compliance } from "@/slides/13-compliance";
-import { Slide14Adoption } from "@/slides/14-adoption";
-import { Slide15AsksPrimitives } from "@/slides/15-asks-primitives";
-import { Slide16AsksSystem } from "@/slides/16-asks-system";
-import { Slide17Ecosystem } from "@/slides/17-ecosystem";
-import { Slide18Quantum } from "@/slides/18-quantum";
-import { Slide19DemoTransfer } from "@/slides/19-demo-transfer";
-import { Slide20FindMe } from "@/slides/20-find-me";
+import { Slide02AboutMe } from "@/slides/02-about-me";
+import { Slide03ZkOnSolana } from "@/slides/03-zk-on-solana";
+import { Slide04TreasuryQuestion } from "@/slides/04-treasury-question";
+import { Slide05PublicAmounts } from "@/slides/05-public-amounts";
+import { Slide06AtAGlance } from "@/slides/06-at-a-glance";
+import { Slide07ProtocolOverview } from "@/slides/07-protocol-overview";
+import { Slide08ProtocolVsPaper } from "@/slides/08-protocol-vs-paper";
+import { Slide09WhyNotUtxos } from "@/slides/09-why-not-utxos";
+import { Slide10AdoptionHurdles } from "@/slides/10-adoption-hurdles";
+import { Slide11AuditorKey } from "@/slides/11-auditor-key";
+import { Slide12DemoSetup } from "@/slides/12-demo-setup";
+import { Slide13LiveTransfer } from "@/slides/13-live-transfer";
+import { Slide14PaymentProducts } from "@/slides/14-payment-products";
+import { Slide15BeyondPayments } from "@/slides/15-beyond-payments";
+import { Slide16Buyers } from "@/slides/16-buyers";
+import { Slide17Preconditions } from "@/slides/17-preconditions";
+import { Slide18OpenProblems } from "@/slides/18-open-problems";
+import { Slide19FindMe } from "@/slides/19-find-me";
 
 export type Section =
   | "intro"
@@ -65,153 +66,162 @@ export const slides: SlideMeta[] = [
     section: "intro",
     timeSeconds: 30,
     notes: "One line on screen. Establish the bridge role verbally; don't read the slide.",
-    Component: Slide02ColdOpen,
+    Component: Slide02AboutMe,
   },
   {
     id: 3,
+    title: "ZK on Solana, at a glance",
+    section: "intro",
+    timeSeconds: 45,
+    notes:
+      "Pan the landscape before diving into one slice. Confidential transfers is this talk; Sunspot/RISC Zero/ZK Compression are proving infra; Encifher/Privacy Cash/Yona/Darklake are encrypted apps. Reinforce: many more shipping.",
+    Component: Slide03ZkOnSolana,
+  },
+  {
+    id: 4,
     title: "The treasury question",
     section: "problem",
     timeSeconds: 80,
     notes:
       "The recurring buyer question. End on: today's honest answer on public chains is yes.",
-    Component: Slide03PrivacySpectrum,
+    Component: Slide04TreasuryQuestion,
   },
   {
-    id: 4,
+    id: 5,
     title: "Public amounts leak business strategy",
     section: "problem",
     timeSeconds: 80,
     notes:
       "Five concrete leak vectors for payment companies. Right column compares legacy rails on counterparty visibility.",
-    Component: Slide04Treasury,
+    Component: Slide05PublicAmounts,
   },
   {
-    id: 5,
+    id: 6,
     title: "Confidential transfers at a glance",
     section: "protocol",
     timeSeconds: 60,
     isDemo: true,
     notes:
-      "System shape before details: account graph public, amount encrypted, accountable views (auditor optional).",
-    Component: Slide06DemoProtocol,
+      "System shape before details: account graph public, amount encrypted, accountable views (auditor optional). Credit Sam Kim (Anza) as protocol designer.",
+    Component: Slide06AtAGlance,
   },
   {
-    id: 6,
+    id: 7,
     title: "Protocol overview",
     section: "protocol",
     timeSeconds: 130,
     isDemo: true,
     notes:
-      "Right arrow steps through configure mint → opt-in → deposit → apply → transfer → withdraw. Each step shows public/owner/auditor view.",
-    Component: Slide07PendingAvailable,
+      "Right arrow steps through configure mint → opt-in → deposit → apply → transfer → withdraw. Each step shows public/owner/auditor view plus the underlying primitives.",
+    Component: Slide07ProtocolOverview,
   },
   {
-    id: 7,
+    id: 8,
     title: "Protocol vs paper",
     section: "protocol",
     timeSeconds: 110,
     isDemo: true,
     notes:
       "Map deployed primitives to paper citations and SDK types. Sidebar lists deployment-only details (AES dual-encrypt, proof context state accounts, ZK ElGamal Proof Program separation, lo/hi 16-bit split).",
-    Component: Slide08Auditor,
+    Component: Slide08ProtocolVsPaper,
   },
   {
-    id: 8,
+    id: 9,
     title: "Why not UTXOs?",
     section: "protocol",
     timeSeconds: 80,
     notes:
       "Pre-answer the cryptographer's first question now that the protocol is on screen. UTXOs optimize anonymity sets; confidential accounts optimize institutional deployment.",
-    Component: Slide05B2B,
+    Component: Slide09WhyNotUtxos,
   },
   {
-    id: 9,
+    id: 10,
     title: "Adoption hurdles",
     section: "deployment",
     timeSeconds: 70,
     notes:
       "Ecosystem adoption, transaction sizes, composability. Each one a real product constraint, not a research footnote.",
-    Component: Slide09DemoKeyDerivation,
+    Component: Slide10AdoptionHurdles,
   },
   {
-    id: 10,
+    id: 11,
     title: "Auditor key",
     section: "deployment",
     timeSeconds: 70,
     notes:
       "Grouped 3-handle validity proof. What it gives, what institutions still need (selective disclosure, regulatory clarity, long-term key mgmt).",
-    Component: Slide11Audits,
+    Component: Slide11AuditorKey,
   },
   {
-    id: 11,
+    id: 12,
     title: "Demo setup",
     section: "demo",
     timeSeconds: 45,
     notes: "Local cluster vs devnet. Same protocol, controlled latency.",
-    Component: Slide13Compliance,
+    Component: Slide12DemoSetup,
   },
   {
-    id: 12,
+    id: 13,
     title: "Live transfer",
     section: "demo",
     timeSeconds: 110,
     isDemo: true,
     notes:
       "Sender / receiver / auditor / chain analyst. Same transaction, different authorized views.",
-    Component: Slide14Adoption,
+    Component: Slide13LiveTransfer,
   },
   {
-    id: 13,
+    id: 14,
     title: "Payment products",
     section: "ecosystem",
     timeSeconds: 60,
     notes:
       "Treasury rebalancing, B2B settlement, stablecoin operations.",
-    Component: Slide15AsksPrimitives,
+    Component: Slide14PaymentProducts,
   },
   {
-    id: 14,
+    id: 15,
     title: "Beyond payments",
     section: "ecosystem",
     timeSeconds: 60,
     notes:
       "Twisted ElGamal as a substrate. Adjacent stacks (MPC, FHE, TEE) explore different points in the design space.",
-    Component: Slide16AsksSystem,
+    Component: Slide15BeyondPayments,
   },
   {
-    id: 15,
+    id: 16,
     title: "Who's going to use this",
     section: "adoption",
     timeSeconds: 70,
     notes:
       "Use cleared names only. Stablecoin issuers, payment networks, treasury operators.",
-    Component: Slide17Ecosystem,
+    Component: Slide16Buyers,
   },
   {
-    id: 16,
+    id: 17,
     title: "What has to be true",
     section: "adoption",
     timeSeconds: 50,
     notes:
       "Custody, audit operations, performance, integrations.",
-    Component: Slide18Quantum,
+    Component: Slide17Preconditions,
   },
   {
-    id: 17,
+    id: 18,
     title: "Open problems",
     section: "questions",
     timeSeconds: 90,
     notes:
       "Concrete asks for the room: smaller range proofs, threshold auditor, bounded balance reads, programmable disclosure, encrypted composability, account UX standards.",
-    Component: Slide19DemoTransfer,
+    Component: Slide18OpenProblems,
   },
   {
-    id: 18,
+    id: 19,
     title: "Questions",
     section: "questions",
     timeSeconds: 15,
-    notes: "Q&A magnet. Invite challenge.",
-    Component: Slide20FindMe,
+    notes: "Q&A magnet. Invite challenge. Email + x.com/nocircuit + GitHub.",
+    Component: Slide19FindMe,
   },
 ];
 

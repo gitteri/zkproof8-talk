@@ -30,7 +30,7 @@ const rails = [
   { rail: "Public chains today", confidential: false },
 ];
 
-export function Slide04Treasury() {
+export function Slide05PublicAmounts() {
   return (
     <SlideFrame align="start">
       <div className="flex h-full w-full flex-col gap-6">

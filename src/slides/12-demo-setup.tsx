@@ -2,14 +2,11 @@ import { SlideEyebrow, SlideFrame, SlideTitle } from "@/components/SlideFrame";
 
 const steps = [
   "Configure mint and accounts",
-  "Deposit treasury funds",
-  "Transfer to vendor",
-  "Receiver applies pending balance",
-  "Auditor decrypts event stream",
-  "Public analyst sees ciphertext only",
+  "Opt-in to confidential transfers",
+  "Mint USDC to treasury account",
 ];
 
-export function Slide13Compliance() {
+export function Slide12DemoSetup() {
   return (
     <SlideFrame align="start">
       <div className="flex h-full w-full flex-col gap-10">
@@ -21,19 +18,15 @@ export function Slide13Compliance() {
         <div className="grid flex-1 grid-cols-[0.95fr_1.05fr] gap-8">
           <div className="grid grid-rows-2 gap-4">
             <Mode
-              title="Local cluster"
-              body="Talk-safe path. Same protocol, controlled latency, no room-wifi drama."
-              active
-            />
-            <Mode
               title="Devnet"
-              body="Network-real path. Use it if the environment is cooperative."
+              body="Live cluster running."
+              active
             />
           </div>
 
           <div className="rounded-md border border-ink-line bg-ink-softer/40 p-6 hairline">
             <div className="font-mono text-deck-xs uppercase text-bone-mute">
-              The proof story
+              Setup Completed
             </div>
             <ol className="mt-5 grid grid-cols-2 gap-3">
               {steps.map((step, i) => (

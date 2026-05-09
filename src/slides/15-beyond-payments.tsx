@@ -15,7 +15,7 @@ const apps = [
   },
 ];
 
-export function Slide16AsksSystem() {
+export function Slide15BeyondPayments() {
   return (
     <SlideFrame align="start">
       <div className="flex h-full w-full flex-col gap-8">
@@ -55,11 +55,6 @@ export function Slide16AsksSystem() {
             ))}
           </div>
         </div>
-
-        <p className="max-w-[82ch] font-sans text-deck-sm text-bone-dim">
-          Adjacent stacks like MPC-based confidential SPL explore different
-          points in the trust and compute design space.
-        </p>
       </div>
     </SlideFrame>
   );

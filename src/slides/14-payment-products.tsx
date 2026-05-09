@@ -15,7 +15,7 @@ const products = [
   },
 ];
 
-export function Slide15AsksPrimitives() {
+export function Slide14PaymentProducts() {
   return (
     <SlideFrame align="start">
       <div className="flex h-full w-full flex-col gap-10">
@@ -39,11 +39,6 @@ export function Slide15AsksPrimitives() {
             </div>
           ))}
         </div>
-
-        <p className="max-w-[82ch] font-sans text-deck-base text-bone">
-          This is not privacy for its own sake. It is privacy as table stakes
-          for payment operations.
-        </p>
       </div>
     </SlideFrame>
   );

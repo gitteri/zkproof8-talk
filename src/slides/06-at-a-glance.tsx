@@ -18,27 +18,43 @@ const views = [
   },
 ];
 
-export function Slide06DemoProtocol() {
+const transferPayload = [
+  "ct_sender = (C, D_s)",
+  "ct_receiver = (C, D_r)",
+  "ct_auditor = (C, D_a)",
+  "π_validity · π_equality · π_range",
+];
+
+export function Slide06AtAGlance() {
   return (
     <SlideFrame align="start">
-      <div className="flex h-full w-full flex-col gap-10">
-        <div className="space-y-4">
+      <div className="flex h-full w-full flex-col gap-8">
+        <div className="space-y-3">
           <SlideEyebrow>Protocol</SlideEyebrow>
           <SlideTitle>Confidential transfers at a glance</SlideTitle>
         </div>
 
-        <div className="grid flex-1 grid-cols-[1fr_0.6fr_1fr] items-center gap-8">
-          <Account label="Treasury" balance="enc(1,250,000)" />
-          <div className="flex flex-col items-center gap-4">
+        <div className="grid flex-1 grid-cols-[1fr_0.8fr_1fr] items-center gap-8">
+          <Account label="Treasury" balance="enc(1,250,000)" pk="pk_sender" />
+          <div className="flex flex-col items-center gap-3">
             <div className="font-mono text-deck-xs uppercase text-bone-mute">
-              transfer
+              transfer payload
             </div>
             <Arrow />
-            <div className="rounded border border-sol-green/40 bg-sol-green/5 px-4 py-2 font-mono text-deck-xs uppercase text-sol-green">
-              amount hidden
+            <div className="w-full rounded-md border border-sol-green/40 bg-sol-green/5 px-4 py-3">
+              <div className="text-center font-mono text-deck-xs uppercase text-sol-green">
+                amount hidden · 3 ciphertexts + 3 proofs
+              </div>
+              <ul className="mt-3 space-y-1 font-mono text-deck-xs text-bone">
+                {transferPayload.map((line) => (
+                  <li key={line} className="text-center">
+                    {line}
+                  </li>
+                ))}
+              </ul>
             </div>
           </div>
-          <Account label="Vendor" balance="enc(250,000)" />
+          <Account label="Vendor" balance="enc(250,000)" pk="pk_receiver" />
         </div>
 
         <div className="grid grid-cols-3 gap-4">
@@ -56,23 +72,41 @@ export function Slide06DemoProtocol() {
             </div>
           ))}
         </div>
+
+        <p className="font-mono text-deck-xs uppercase text-bone-mute">
+          protocol designer · Sam Kim (Anza)
+        </p>
       </div>
     </SlideFrame>
   );
 }
 
-function Account({ label, balance }: { label: string; balance: string }) {
+function Account({
+  label,
+  balance,
+  pk,
+}: {
+  label: string;
+  balance: string;
+  pk: string;
+}) {
   return (
-    <div className="rounded-md border border-ink-line bg-ink-softer/40 p-7 hairline">
+    <div className="rounded-md border border-ink-line bg-ink-softer/40 p-6 hairline">
       <div className="font-mono text-deck-xs uppercase text-bone-mute">
         token account
       </div>
-      <div className="mt-3 font-sans text-deck-lg font-semibold text-bone">
+      <div className="mt-2 font-sans text-deck-lg font-semibold text-bone">
         {label}
       </div>
-      <code className="mt-8 block font-mono text-deck-base text-bone-dim">
+      <code className="mt-6 block font-mono text-deck-base text-bone-dim">
         {balance}
       </code>
+      <div className="mt-4 font-mono text-deck-xs text-bone-mute">
+        twisted ElGamal under <span className="text-bone">{pk}</span>
+      </div>
+      <div className="font-mono text-deck-xs text-bone-mute">
+        + AES-GCM-SIV available cipher
+      </div>
     </div>
   );
 }

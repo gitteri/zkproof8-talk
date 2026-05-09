@@ -19,7 +19,7 @@ const gates = [
   },
 ];
 
-export function Slide18Quantum() {
+export function Slide17Preconditions() {
   return (
     <SlideFrame align="start">
       <div className="flex h-full w-full flex-col gap-10">
@@ -43,11 +43,6 @@ export function Slide18Quantum() {
             </div>
           ))}
         </div>
-
-        <p className="max-w-[82ch] font-sans text-deck-base text-bone">
-          This is the bridge from a primitive to a rail: the cryptography has
-          to survive contact with operations.
-        </p>
       </div>
     </SlideFrame>
   );
