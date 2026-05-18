@@ -1,0 +1,331 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>Cryptography on Solana</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      :root {
+        --ink: #0b0b0f;
+        --ink-softer: #14141a;
+        --ink-line: #1f1f28;
+        --bone: #f5f5f2;
+        --bone-dim: #a3a3ad;
+        --bone-mute: #6b6b78;
+        --sol-purple: #9945ff;
+        --sol-magenta: #dc1fff;
+        --sol-green: #14f195;
+        --accent-amber: #ffc857;
+        --accent-coral: #ff6b6b;
+        --accent-sky: #5eb1ff;
+      }
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+      html,
+      body {
+        background: var(--ink);
+      }
+      body {
+        font-family: "Inter", system-ui, sans-serif;
+        color: var(--bone);
+      }
+      .frame {
+        width: 1600px;
+        height: 900px;
+        padding: 56px 64px 40px;
+        display: flex;
+        flex-direction: column;
+        gap: 28px;
+        position: relative;
+        overflow: hidden;
+      }
+      .frame::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 4px;
+        background: linear-gradient(
+          90deg,
+          var(--sol-purple) 0%,
+          var(--sol-magenta) 50%,
+          var(--sol-green) 100%
+        );
+      }
+      header {
+        display: flex;
+        align-items: flex-end;
+        justify-content: space-between;
+      }
+      .eyebrow {
+        font-family: "JetBrains Mono", ui-monospace, monospace;
+        font-size: 14px;
+        letter-spacing: 0.18em;
+        text-transform: uppercase;
+        color: var(--bone-mute);
+      }
+      h1 {
+        font-size: 64px;
+        font-weight: 700;
+        letter-spacing: -0.02em;
+        margin-top: 12px;
+      }
+      .timestamp {
+        font-family: "JetBrains Mono", ui-monospace, monospace;
+        font-size: 14px;
+        color: var(--bone-mute);
+        text-align: right;
+      }
+      .grid {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        gap: 18px;
+      }
+      .row {
+        display: grid;
+        gap: 18px;
+        flex: 1;
+      }
+      .row-top {
+        grid-template-columns: repeat(4, 1fr);
+      }
+      .row-bottom {
+        grid-template-columns: repeat(3, 1fr);
+      }
+      .card {
+        border: 1px solid var(--ink-line);
+        background: var(--ink-softer);
+        border-radius: 12px;
+        padding: 22px 24px;
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+      }
+      .card.green {
+        border-color: rgba(20, 241, 149, 0.45);
+        background: rgba(20, 241, 149, 0.04);
+      }
+      .card.purple {
+        border-color: rgba(153, 69, 255, 0.45);
+        background: rgba(153, 69, 255, 0.04);
+      }
+      .card.amber {
+        border-color: rgba(255, 200, 87, 0.5);
+        background: rgba(255, 200, 87, 0.05);
+      }
+      .card.coral {
+        border-color: rgba(255, 107, 107, 0.5);
+        background: rgba(255, 107, 107, 0.05);
+      }
+      .card.sky {
+        border-color: rgba(94, 177, 255, 0.5);
+        background: rgba(94, 177, 255, 0.05);
+      }
+      .card.muted {
+        border-color: rgba(107, 107, 120, 0.4);
+        background: rgba(20, 20, 26, 0.5);
+      }
+      .card-head {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+      }
+      .card-title {
+        font-size: 26px;
+        font-weight: 600;
+        letter-spacing: -0.01em;
+      }
+      .pill {
+        font-family: "JetBrains Mono", ui-monospace, monospace;
+        font-size: 11px;
+        letter-spacing: 0.16em;
+        text-transform: uppercase;
+        padding: 4px 10px;
+        border-radius: 999px;
+        border: 1px solid currentColor;
+      }
+      .pill.green { color: var(--sol-green); }
+      .pill.purple { color: var(--sol-purple); }
+      .pill.amber { color: var(--accent-amber); }
+      .pill.coral { color: var(--accent-coral); }
+      .pill.sky { color: var(--accent-sky); }
+      .pill.muted { color: var(--bone-mute); }
+      ul {
+        list-style: none;
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+      }
+      li {
+        font-family: "JetBrains Mono", ui-monospace, monospace;
+        font-size: 16px;
+        color: var(--bone-dim);
+        line-height: 1.5;
+      }
+      li strong {
+        color: var(--bone);
+        font-weight: 600;
+      }
+      .star {
+        color: var(--sol-green);
+        font-weight: 700;
+      }
+      .footer {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        font-family: "JetBrains Mono", ui-monospace, monospace;
+        font-size: 14px;
+        color: var(--bone-mute);
+        padding-top: 6px;
+        border-top: 1px solid var(--ink-line);
+      }
+      .legend {
+        display: flex;
+        gap: 24px;
+      }
+      .legend-item {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+      .swatch {
+        width: 12px;
+        height: 12px;
+        border-radius: 3px;
+      }
+      .swatch.green { background: var(--sol-green); }
+      .swatch.purple { background: var(--sol-purple); }
+      .swatch.amber { background: var(--accent-amber); }
+      .swatch.coral { background: var(--accent-coral); }
+      .swatch.sky { background: var(--accent-sky); }
+    </style>
+  </head>
+  <body>
+    <div class="frame">
+      <header>
+        <div>
+          <div class="eyebrow">Reference</div>
+          <h1>Cryptography on Solana</h1>
+        </div>
+        <div class="timestamp">
+          May 2026<br />
+          mainnet · feature gate verified
+        </div>
+      </header>
+
+      <div class="grid">
+        <div class="row row-top">
+          <div class="card purple">
+            <div class="card-head">
+              <div class="card-title">Hashes</div>
+              <div class="pill purple">syscalls</div>
+            </div>
+            <ul>
+              <li><strong>sha256</strong> · standard</li>
+              <li><strong>keccak256</strong> · EVM compat</li>
+              <li><strong>poseidon</strong> · ZK-friendly, since v1.17</li>
+            </ul>
+          </div>
+
+          <div class="card purple">
+            <div class="card-head">
+              <div class="card-title">Curves &amp; signatures</div>
+              <div class="pill purple">syscalls + precompiles</div>
+            </div>
+            <ul>
+              <li><strong>curve25519</strong> · Ristretto + Edwards group ops, MSM</li>
+              <li><strong>secp256k1_recover</strong></li>
+              <li><strong>Ed25519 / Secp256k1 sigverify</strong> · native programs</li>
+            </ul>
+          </div>
+
+          <div class="card purple">
+            <div class="card-head">
+              <div class="card-title">Pairings &amp; SNARKs</div>
+              <div class="pill purple">syscalls</div>
+            </div>
+            <ul>
+              <li><strong>alt_bn128 (BN254)</strong> · G1 add / mul + pairing</li>
+              <li><strong>alt_bn128 compression</strong> · G1 + G2</li>
+              <li>→ Groth16, KZG, Plonk on chain today</li>
+            </ul>
+          </div>
+
+          <div class="card purple">
+            <div class="card-head">
+              <div class="card-title">ZK ElGamal Proof Program</div>
+              <div class="pill purple">native program</div>
+            </div>
+            <ul>
+              <li><strong>13 sigma protocol shapes</strong> verified natively</li>
+              <li>pubkey validity · ciphertext-commitment equality</li>
+              <li>batched range proofs · grouped ciphertext validity</li>
+              <li>→ verify-into-context-state-account pattern</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="row row-bottom">
+          <div class="card amber">
+            <div class="card-head">
+              <div class="card-title">Pending mainnet</div>
+              <div class="pill amber">in flight</div>
+            </div>
+            <ul>
+              <li><strong>BLS12-381 syscalls</strong> (SIMD-0388) · BLS aggregation, 128-bit SNARKs, with Agave v4.0</li>
+              <li><strong>alt_bn128 G2 add / mul</strong> (SIMD-0302) · completes BN254 group ops</li>
+              <li><strong>ZK ElGamal Proof re-enable</strong> · returns in v4.0</li>
+              <li><strong>sha512 syscall</strong> · arrives in Agave v4.1</li>
+            </ul>
+          </div>
+
+          <div class="card coral">
+            <div class="card-head">
+              <div class="card-title">Genuinely open</div>
+              <div class="pill coral">research</div>
+            </div>
+            <ul>
+              <li><strong>Folding-scheme verifier</strong> · Nova / ProtoStar</li>
+              <li><strong>Programmable sigma</strong> · beyond 13 fixed shapes</li>
+              <li><strong>Newer ZK hashes</strong> · Tip5, Anemoi, Reinforced Concrete</li>
+              <li><strong>Encrypted-state composability</strong></li>
+            </ul>
+          </div>
+
+          <div class="card sky">
+            <div class="card-head">
+              <div class="card-title">Post-quantum</div>
+              <div class="pill sky">doable today</div>
+            </div>
+            <ul>
+              <li><strong>Winternitz / WOTS+</strong> · winterwallet impl, on-chain now (256-bit at 4kb tx)</li>
+              <li><strong>Falcon-512</strong> · BPF verifier under 200k CUs, zero protocol changes</li>
+              <li>Anza 3-step plan: research → new wallets → migrate existing</li>
+              <li>Confidential balances still on Curve25519 (HNDL applies)</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <div class="footer">
+        <div class="legend">
+          <div class="legend-item"><div class="swatch purple"></div>live on mainnet</div>
+          <div class="legend-item"><div class="swatch amber"></div>pending mainnet</div>
+          <div class="legend-item"><div class="swatch coral"></div>open research</div>
+          <div class="legend-item"><div class="swatch sky"></div>post-quantum</div>
+        </div>
+        <div>solana.com/docs/core/programs/syscall-reference · agave feature gate tracker</div>
+      </div>
+    </div>
+  </body>
+</html>

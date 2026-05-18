@@ -2,12 +2,13 @@
 
 import clsx from "clsx";
 
-import type { TransferProgress } from "@/lib/api";
+import { explorerUrl, type TransferProgress } from "@/lib/api";
 
 interface Props {
   open: boolean;
   events: TransferProgress[];
   title?: string;
+  rpcUrl?: string | null;
   onClose?: () => void;
 }
 
@@ -17,6 +18,7 @@ export function TransferProgressPopup({
   open,
   events,
   title = "Live transfer",
+  rpcUrl,
   onClose,
 }: Props) {
   if (!open) return null;
@@ -88,6 +90,7 @@ export function TransferProgressPopup({
               ev={ev}
               isLatest={idx === events.length - 1}
               status={status}
+              rpcUrl={rpcUrl}
             />
           ))}
           {timeline.length === 0 && (
@@ -119,10 +122,12 @@ function TimelineRow({
   ev,
   isLatest,
   status,
+  rpcUrl,
 }: {
   ev: TransferProgress;
   isLatest: boolean;
   status: Status;
+  rpcUrl?: string | null;
 }) {
   if (ev.type === "phase") {
     const isPending = isLatest && status === "running";
@@ -146,16 +151,28 @@ function TimelineRow({
   if (ev.type === "signature") {
     return (
       <li className="event-appear flex items-start gap-4 rounded-md border border-sol-green/40 bg-sol-green/5 px-4 py-3">
-        <span className="mt-2 inline-flex flex-none items-center gap-1.5 font-mono text-[0.65rem] uppercase tracking-[0.15em] text-sol-green">
-          tx
-        </span>
+        <a
+          href={explorerUrl(ev.sig, rpcUrl)}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="mt-2 inline-flex flex-none items-center gap-1.5 font-mono text-[0.65rem] uppercase tracking-[0.15em] text-sol-green hover:text-sol-teal"
+          title="open in Solana Explorer"
+        >
+          tx ↗
+        </a>
         <div className="flex min-w-0 flex-1 flex-col">
           <span className="font-mono text-deck-xs uppercase text-bone-mute">
             {ev.label}
           </span>
-          <code className="truncate font-mono text-deck-sm text-bone">
+          <a
+            href={explorerUrl(ev.sig, rpcUrl)}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="truncate font-mono text-deck-sm text-bone underline-offset-4 hover:text-sol-teal hover:underline"
+            title="open in Solana Explorer"
+          >
             {ev.sig}
-          </code>
+          </a>
         </div>
       </li>
     );

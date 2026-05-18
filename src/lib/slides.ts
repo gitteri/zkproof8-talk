@@ -8,17 +8,15 @@ import { Slide05PublicAmounts } from "@/slides/05-public-amounts";
 import { Slide06AtAGlance } from "@/slides/06-at-a-glance";
 import { Slide07ProtocolOverview } from "@/slides/07-protocol-overview";
 import { Slide08ProtocolVsPaper } from "@/slides/08-protocol-vs-paper";
-import { Slide09WhyNotUtxos } from "@/slides/09-why-not-utxos";
+import { Slide09ProofFlow } from "@/slides/09-proof-flow";
 import { Slide10AdoptionHurdles } from "@/slides/10-adoption-hurdles";
 import { Slide11AuditorKey } from "@/slides/11-auditor-key";
 import { Slide12DemoSetup } from "@/slides/12-demo-setup";
 import { Slide13LiveTransfer } from "@/slides/13-live-transfer";
 import { Slide14PaymentProducts } from "@/slides/14-payment-products";
 import { Slide15BeyondPayments } from "@/slides/15-beyond-payments";
-import { Slide16Buyers } from "@/slides/16-buyers";
-import { Slide17Preconditions } from "@/slides/17-preconditions";
-import { Slide18OpenProblems } from "@/slides/18-open-problems";
-import { Slide19FindMe } from "@/slides/19-find-me";
+import { Slide16OpenProblems } from "@/slides/16-open-problems";
+import { Slide17FindMe } from "@/slides/17-find-me";
 
 export type Section =
   | "intro"
@@ -127,12 +125,12 @@ export const slides: SlideMeta[] = [
   },
   {
     id: 9,
-    title: "Why not UTXOs?",
+    title: "Proof flow",
     section: "protocol",
-    timeSeconds: 80,
+    timeSeconds: 90,
     notes:
-      "Pre-answer the cryptographer's first question now that the protocol is on screen. UTXOs optimize anonymity sets; confidential accounts optimize institutional deployment.",
-    Component: Slide09WhyNotUtxos,
+      "Cryptographer's lens: prover (client) → ZK ElGamal Proof Program (verify + pin public inputs) → Token-2022 (bind pinned context, apply homomorphic balance update). Witness stays client-side; only public inputs and proofs cross the wire.",
+    Component: Slide09ProofFlow,
   },
   {
     id: 10,
@@ -190,38 +188,20 @@ export const slides: SlideMeta[] = [
   },
   {
     id: 16,
-    title: "Who's going to use this",
-    section: "adoption",
-    timeSeconds: 70,
+    title: "Open problems",
+    section: "questions",
+    timeSeconds: 60,
     notes:
-      "Use cleared names only. Stablecoin issuers, payment networks, treasury operators.",
-    Component: Slide16Buyers,
+      "Reframe: Ethereum ZK proves expensive comp cheaply, Solana privacy maintains confidential state under fast execution. Different optimization target. Asks: encrypted mempool/matching, programmable encrypted state (FHE-lite), aggregation (folding/IPA/sumcheck), hybrid stacks (TEE+MPC+ZK), hardware acceleration, private composability.",
+    Component: Slide16OpenProblems,
   },
   {
     id: 17,
-    title: "What has to be true",
-    section: "adoption",
-    timeSeconds: 50,
-    notes:
-      "Custody, audit operations, performance, integrations.",
-    Component: Slide17Preconditions,
-  },
-  {
-    id: 18,
-    title: "Open problems",
-    section: "questions",
-    timeSeconds: 90,
-    notes:
-      "Concrete asks for the room: smaller range proofs, threshold auditor, bounded balance reads, programmable disclosure, encrypted composability, account UX standards.",
-    Component: Slide18OpenProblems,
-  },
-  {
-    id: 19,
     title: "Questions",
     section: "questions",
     timeSeconds: 15,
     notes: "Q&A magnet. Invite challenge. Email + x.com/nocircuit + GitHub.",
-    Component: Slide19FindMe,
+    Component: Slide17FindMe,
   },
 ];
 

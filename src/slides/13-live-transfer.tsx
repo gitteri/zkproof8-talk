@@ -5,14 +5,21 @@ import clsx from "clsx";
 
 import { SlideEyebrow, SlideFrame, SlideTitle } from "@/components/SlideFrame";
 import { TransferProgressPopup } from "@/components/TransferProgressPopup";
-import { useDemoState, useTransferProgress } from "@/hooks/useDemo";
-import type { ActionResponse, LedgerState, TransferProgress } from "@/lib/api";
+import { useDemoState, useHealth, useTransferProgress } from "@/hooks/useDemo";
+import {
+  explorerUrl,
+  type ActionResponse,
+  type LedgerState,
+  type TransferProgress,
+} from "@/lib/api";
 
 type ActiveOp = "transfer" | "apply" | null;
 
 export function Slide13LiveTransfer() {
   const { state, busy, error, runTransfer, runApply } = useDemoState(true);
   const { events, reset, push } = useTransferProgress();
+  const { health } = useHealth();
+  const rpcUrl = health?.rpc_url ?? null;
   const [popupOpen, setPopupOpen] = useState(false);
   const [activeOp, setActiveOp] = useState<ActiveOp>(null);
 
@@ -191,9 +198,25 @@ export function Slide13LiveTransfer() {
                       events
                     </div>
                     <ul className="mt-1 flex flex-col gap-1 font-mono text-deck-xs text-bone-dim">
-                      {c.extra.map((line) => (
-                        <li key={line} className="truncate">
-                          {line}
+                      {c.extra.map((row, i) => (
+                        <li
+                          key={`${row.sig ?? row.label}-${i}`}
+                          className="flex items-baseline gap-1.5"
+                        >
+                          {row.sig ? (
+                            <a
+                              href={explorerUrl(row.sig, rpcUrl)}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="flex min-w-0 flex-1 items-baseline gap-1.5 hover:text-sol-teal hover:underline"
+                              title="open in Solana Explorer"
+                            >
+                              <span className="truncate">{row.label}</span>
+                              <span className="flex-none text-sol-green">↗</span>
+                            </a>
+                          ) : (
+                            <span className="truncate">{row.label}</span>
+                          )}
                         </li>
                       ))}
                     </ul>
@@ -226,6 +249,7 @@ export function Slide13LiveTransfer() {
         open={popupOpen}
         events={events}
         title={activeOp === "apply" ? "Apply pending balance" : "Live transfer"}
+        rpcUrl={rpcUrl}
         onClose={() => setPopupOpen(false)}
       />
     </SlideFrame>
@@ -243,6 +267,8 @@ function KeyHint({ label, hint }: { label: string; hint: string }) {
   );
 }
 
+type AuditorRow = { label: string; sig?: string };
+
 type Column = {
   role: string;
   sub: string;
@@ -250,7 +276,7 @@ type Column = {
   plaintext: string | null;
   pendingPlain?: string | null;
   accent: string;
-  extra?: string[];
+  extra?: AuditorRow[];
 };
 
 function buildColumns(state: LedgerState | null): Column[] {
@@ -288,7 +314,10 @@ function buildColumns(state: LedgerState | null): Column[] {
       ciphertext: lastTransfer ? shortSig(lastTransfer.sig) : "—",
       plaintext: lastTransfer ? `transfer / ${formatUi(lastTransfer.amount_ui)}` : "—",
       accent: "border-sol-purple/60",
-      extra: state.auditor.recent_events.slice(0, 3).map((e) => `${e.kind} · ${formatUi(e.amount_ui)}`),
+      extra: state.auditor.recent_events.slice(0, 3).map((e) => ({
+        label: `${e.kind} · ${formatUi(e.amount_ui)}`,
+        sig: e.sig,
+      })),
     },
     {
       role: "Chain analyst / Public",

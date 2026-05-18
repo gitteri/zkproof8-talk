@@ -55,6 +55,23 @@ export type TransferProgress =
   | { type: "done"; sigs: string[] }
   | { type: "error"; message: string };
 
+/** Build a Solana Explorer URL for a transaction signature, picking the right
+ *  cluster query string based on the backend's RPC URL. */
+export function explorerUrl(sig: string, rpcUrl?: string | null): string {
+  const base = `https://explorer.solana.com/tx/${sig}`;
+  if (!rpcUrl) return base;
+  if (rpcUrl.includes("devnet")) return `${base}?cluster=devnet`;
+  if (rpcUrl.includes("testnet")) return `${base}?cluster=testnet`;
+  if (
+    rpcUrl.includes("localhost") ||
+    rpcUrl.includes("127.0.0.1") ||
+    rpcUrl.includes("surfnet")
+  ) {
+    return `${base}?cluster=custom&customUrl=${encodeURIComponent(rpcUrl)}`;
+  }
+  return base; // mainnet-beta default
+}
+
 /** Subscribe to the SSE event stream. Returns a cleanup function. */
 export function subscribeProgress(
   onEvent: (ev: TransferProgress) => void,

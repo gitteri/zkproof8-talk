@@ -4,14 +4,17 @@ const apps = [
   {
     title: "Private order books",
     body: "Commit to order state without exposing inventory or intent before execution.",
+    buyers: "Exchanges, market makers, regulated securities desks",
   },
   {
     title: "Sealed-bid auctions",
     body: "Encrypted bids with public settlement and proofs that the clearing rule was followed.",
+    buyers: "Investment firms, DVP / settlement, RWA platforms",
   },
   {
     title: "Encrypted governance",
     body: "Votes, allocations, and state transitions that reveal outcomes without exposing every input.",
+    buyers: "DAOs, institutional voting, allocation committees",
   },
 ];
 
@@ -34,8 +37,10 @@ export function Slide15BeyondPayments() {
               just a payments feature.
             </p>
             <p className="mt-5 font-sans text-deck-base text-bone-dim">
-              The ZK ElGamal Proof Program gives builders a common verification
-              path for applications that need hidden amounts or hidden inputs.
+              The same ZK ElGamal Proof Program that backs confidential
+              balances also backs trading, securities settlement, and
+              governance: order books, auctions, DVP, regulated securities,
+              encrypted votes.
             </p>
           </div>
 
@@ -43,7 +48,7 @@ export function Slide15BeyondPayments() {
             {apps.map((app) => (
               <div
                 key={app.title}
-                className="rounded-md border border-sol-purple/40 bg-sol-purple/5 p-5"
+                className="flex flex-col rounded-md border border-sol-purple/40 bg-sol-purple/5 p-5"
               >
                 <div className="font-sans text-deck-base font-semibold text-bone">
                   {app.title}
@@ -51,6 +56,9 @@ export function Slide15BeyondPayments() {
                 <p className="mt-2 font-sans text-deck-sm text-bone-dim">
                   {app.body}
                 </p>
+                <div className="mt-auto pt-3 font-mono text-deck-xs uppercase text-sol-purple">
+                  {app.buyers}
+                </div>
               </div>
             ))}
           </div>

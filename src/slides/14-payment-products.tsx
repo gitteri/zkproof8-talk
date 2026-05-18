@@ -4,14 +4,17 @@ const products = [
   {
     title: "Treasury rebalancing",
     body: "Move liquidity between issuers, regions, and custodians without broadcasting strategy.",
+    buyers: "Global banks, money-transfer networks, treasury operators",
   },
   {
     title: "B2B settlement",
     body: "Vendor, payroll, intercompany, and cross-border flows with public settlement and private amounts.",
+    buyers: "Payment processors, payroll platforms, cross-border networks",
   },
   {
     title: "Stablecoin operations",
     body: "Issuer and processor flows where the market should not learn working capital in real time.",
+    buyers: "Stablecoin issuers, processors, fintechs",
   },
 ];
 
@@ -36,6 +39,9 @@ export function Slide14PaymentProducts() {
               <p className="font-sans text-deck-sm text-bone-dim">
                 {product.body}
               </p>
+              <div className="mt-auto pt-4 font-mono text-deck-xs uppercase text-sol-green">
+                {product.buyers}
+              </div>
             </div>
           ))}
         </div>
