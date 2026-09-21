@@ -120,7 +120,7 @@ export const slides: SlideMeta[] = [
     timeSeconds: 110,
     isDemo: true,
     notes:
-      "Map deployed primitives to paper citations and SDK types. Sidebar lists deployment-only details (AES dual-encrypt, proof context state accounts, ZK ElGamal Proof Program separation, lo/hi 16-bit split).",
+      "Map deployed primitives to paper citations and SDK types. Sidebar lists deployment-only details (AES dual-encrypt, inline proof instructions in one v1 tx, ZK ElGamal Proof Program separation, lo/hi 16-bit split).",
     Component: Slide08ProtocolVsPaper,
   },
   {
