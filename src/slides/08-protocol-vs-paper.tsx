@@ -35,7 +35,7 @@ const mappings = [
 
 const deploymentOnly = [
   "AES-GCM-SIV second ciphertext on every available balance — owner reads without solving DLP",
-  "Proof context state accounts — large proofs pass by reference, transfer fits in one tx",
+  "Proofs as sibling instructions in the same v1 transaction — 4096-byte limit fits all three",
   "ZK ElGamal Proof Program as a separate Solana program, CPI'd from Token-2022",
   "16-bit lo / 16-bit hi ElGamal split on pending balance for tractable u32 decryption",
 ];

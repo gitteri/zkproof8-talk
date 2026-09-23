@@ -44,13 +44,13 @@ const steps = [
   {
     op: "transfer",
     title: "Encrypted amount, three ciphertexts",
-    body: "Transfer instruction carries ciphertexts under sender, receiver, and (if configured) auditor keys. Equality, ciphertext-validity, and range proofs live in proof context state accounts so the transfer fits in a normal transaction.",
+    body: "Transfer instruction carries ciphertexts under sender, receiver, and (if configured) auditor keys. Equality, ciphertext-validity, and range proofs ride in the same v1 transaction as sibling instructions, verified by the ZK ElGamal Proof program.",
     primitives: [
       "GroupedCiphertext3HandlesValidity",
       "CiphertextCiphertextEquality",
       "BatchedRangeProofU128 (Bulletproofs)",
     ],
-    publicView: "ciphertexts + 3 proof accounts",
+    publicView: "ciphertexts + 3 proof instructions",
     ownerView: "sender debit, receiver credit",
     auditorView: "amount via auditor handle",
   },

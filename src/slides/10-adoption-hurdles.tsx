@@ -8,8 +8,8 @@ const hurdles = [
   },
   {
     title: "Transaction sizes",
-    body: "Equality, ciphertext-validity, and range proofs do not fit in one transaction. They go in proof context state accounts: create, reference, close.",
-    detail: "A confidential transfer is 3 transactions on the wire today.",
+    body: "The three transfer proofs total ~1.9 KB, above the 1232-byte legacy transaction limit. The v1 format raises the limit to 4096 bytes, so a transfer with inline proofs is a single transaction.",
+    detail: "v1 is live on mainnet; most client tooling still emits legacy txs.",
   },
   {
     title: "Composability",
